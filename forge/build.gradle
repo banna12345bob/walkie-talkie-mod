@@ -1,7 +1,5 @@
 plugins {
-    id "com.github.johnrengelman.shadow" version "7.1.2"
-    id "com.matthewprenger.cursegradle" version "1.4.0"
-    id "com.modrinth.minotaur" version "2.+"
+    id "com.github.johnrengelman.shadow" version "8.1.1"
 }
 architectury {
     platformSetupLoomIde()
@@ -16,40 +14,50 @@ configurations {
     developmentForge.extendsFrom common
 }
 
-dependencies {
-    forge "net.minecraftforge:forge:${rootProject.minecraft_version}-${rootProject.forge_version}"
+repositories {
+    maven { // Create Forge, Registrate Forge and Flywheel
+        url = "https://maven.tterrag.com/"
+        content {
+            includeGroup("com.tterrag.registrate")
+            includeGroup("com.simibubi.create")
+            includeGroup("com.jozufozu.flywheel")
+        }
+    }
+    mavenCentral()
+}
 
-    modApi "dev.architectury:architectury-forge:${rootProject.architectury_version}"
+dependencies {
+    forge "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
+
+    modApi "dev.architectury:architectury-forge:${architectury_version}"
 
     common(project(path: ":common", configuration: "namedElements")) { transitive false }
     shadowCommon(project(path: ":common", configuration: "transformProductionForge")) { transitive = false }
 
     // SimpleVoiceChat dependencies
     modRuntimeOnly "maven.modrinth:simple-voice-chat:forge-${voicechat_version}"
+
+    // Create and its dependencies
+    // modImplementation("com.simibubi.create:create-${create_minecraft_version}:${create_version}:slim") { transitive = false } // Crashes the game and IDK why
+    modImplementation("com.jozufozu.flywheel:flywheel-forge-${flywheel_minecraft_version}:${flywheel_version}")
+    modImplementation("com.tterrag.registrate:Registrate:${registrate_version}")
 }
 
 shadowJar {
     exclude "fabric.mod.json"
 
     configurations = [project.configurations.shadowCommon]
-    archiveClassifier.set("dev-shadow")
+    setArchiveClassifier "dev-shadow"
 }
 
 remapJar {
-    inputFile.set shadowJar.archiveFile
+    inputFile = shadowJar.archiveFile
     dependsOn shadowJar
-
-    if (minecraft_version == min_minecraft_version) {
-        archiveAppendix.set("forge-${minecraft_version}")
-    } else {
-        archiveAppendix.set("forge-${min_minecraft_version}-${minecraft_version}")
-    }
-
-    archiveClassifier.set(null)
+    setArchiveClassifier null
 }
 
 jar {
-    archiveClassifier.set("dev")
+    setArchiveClassifier "dev"
 }
 
 sourcesJar {
@@ -63,51 +71,3 @@ components.java {
         skip()
     }
 }
-
-curseforge {
-    apiKey = file("${rootDir}/curseforge_api_key.txt").exists() ? file("${rootDir}/curseforge_api_key.txt").text : ''
-    project {
-        id = "825621"
-        changelogType = 'markdown'
-        changelog = file("${rootDir}/changelog.md")
-        releaseType = release_type
-        addGameVersion minecraft_version
-        addGameVersion 'Forge'
-        mainArtifact(remapJar) {
-            if (minecraft_version == min_minecraft_version) {
-                displayName = "[FORGE][${minecraft_version}] Walkie-Talkie ${version}"
-            } else {
-                displayName = "[FORGE][${min_minecraft_version}-${minecraft_version}] Walkie-Talkie ${version}"
-            }
-            relations {
-                requiredDependency 'simple-voice-chat'
-                requiredDependency 'architectury-api'
-            }
-        }
-    }
-}
-
-tasks.modrinth.configure({
-    group = 'upload'
-})
-
-modrinth {
-    token = file("${rootDir}/modrinth_token.txt").exists() ? file("${rootDir}/modrinth_token.txt").text : ''
-    projectId = "yaRitiLw"
-    versionNumber = "forge-${version}"
-    if (minecraft_version == min_minecraft_version) {
-        versionName = "[FORGE][${minecraft_version}] Walkie-Talkie ${version}"
-    } else {
-        versionName = "[FORGE][${min_minecraft_version}-${minecraft_version}] Walkie-Talkie ${version}"
-    }
-    uploadFile = remapJar
-    versionType = release_type.toUpperCase()
-    changelog = file("${rootDir}/changelog.md").text
-    gameVersions = [minecraft_version]
-    loaders = ['forge']
-    dependencies {
-        required.project '9eGKb6K1' // simple-voice-chat
-        required.project 'lhGA9TYQ' // architectury-api
-    }
-}
-tasks.modrinth.dependsOn(build)

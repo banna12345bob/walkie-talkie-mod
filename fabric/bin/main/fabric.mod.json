@@ -1,0 +1,34 @@
+{
+  "schemaVersion": 1,
+  "id": "${mod_id}",
+  "version": "${version}",
+  "name": "${mod_name}",
+  "description": "${description}",
+  "authors": [
+    "${mod_author}"
+  ],
+  "contact": {},
+
+  "license": "${license}",
+  "icon": "${mod_id}.png",
+
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "fr.flaton.walkietalkie.fabric.WalkieTalkieFabric"
+    ],
+    "client": [
+      "fr.flaton.walkietalkie.fabric.WalkieTalkieFabricClient"
+    ],
+    "voicechat": [
+      "fr.flaton.walkietalkie.WalkieTalkieVoiceChatPlugin"
+    ]
+  },
+  "depends": {
+    "fabricloader": ">=${fabric_loader_version}",
+    "minecraft": ">=${min_minecraft_version}",
+    "fabric-api": "*",
+    "voicechat": ">=${min_minecraft_version}-${voicechat_api_version}",
+    "architectury": ">=${architectury_version}"
+  }
+}

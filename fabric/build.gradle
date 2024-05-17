@@ -1,12 +1,18 @@
 plugins {
-    id "com.github.johnrengelman.shadow" version "7.1.2"
-    id "com.matthewprenger.cursegradle" version "1.4.0"
-    id "com.modrinth.minotaur" version "2.+"
+    id "com.github.johnrengelman.shadow" version "8.1.1"
 }
 
 architectury {
     platformSetupLoomIde()
     fabric()
+}
+
+repositories {
+    maven { url = "https://mvn.devos.one/snapshots/" }  // Create Fabric, Forge Tags, Milk Lib, Registrate Fabric
+    maven { url = "https://raw.githubusercontent.com/Fuzss/modresources/main/maven/" } // Forge config api port
+    maven { url = "https://maven.jamieswhiteshirt.com/libs-release" } // Reach Entity Attributes
+    maven { url = "https://jitpack.io/" } // Mixin Extras, Fabric ASM
+    maven { url = 'https://maven.tterrag.com/' } // Flywheel
 }
 
 configurations {
@@ -18,16 +24,20 @@ configurations {
 }
 
 dependencies {
-    modImplementation "net.fabricmc:fabric-loader:${rootProject.fabric_loader_version}"
-    modApi "net.fabricmc.fabric-api:fabric-api:${rootProject.fabric_version}"
-    modApi "dev.architectury:architectury-fabric:${rootProject.architectury_version}"
 
-    common(project(path: ":common", configuration: "namedElements")) { transitive false }
-    shadowCommon(project(path: ":common", configuration: "transformProductionFabric")) { transitive false }
+    modImplementation "net.fabricmc:fabric-loader:${fabric_loader_version}"
+    modApi "net.fabricmc.fabric-api:fabric-api:${fabric_api_version}"
+    modApi "dev.architectury:architectury-fabric:${architectury_version}"
+
+    common(project(path: ":common", configuration: "namedElements")) { transitive = false }
+    shadowCommon(project(path: ":common", configuration: "transformProductionFabric")) { transitive = false }
 
     // SimpleVoiceChat dependencies
     modRuntimeOnly "maven.modrinth:simple-voice-chat:fabric-${voicechat_version}"
     //modRuntimeOnly("maven.modrinth:modmenu:8.0.1")
+
+    // Create - dependencies are added transitively
+    modImplementation("com.simibubi.create:create-fabric-${minecraft_version}:${create_fabric_version}")
 }
 
 shadowJar {
@@ -51,56 +61,6 @@ remapJar {
 jar {
     archiveClassifier.set("dev")
 }
-
-curseforge {
-    apiKey = file("${rootDir}/curseforge_api_key.txt").exists() ? file("${rootDir}/curseforge_api_key.txt").text : ''
-    project {
-        id = "825621"
-        changelogType = 'markdown'
-        changelog = file("${rootDir}/changelog.md")
-        releaseType = release_type
-        addGameVersion minecraft_version
-        addGameVersion 'Fabric'
-        mainArtifact(remapJar) {
-            if (minecraft_version == min_minecraft_version) {
-                displayName = "[FABRIC][${minecraft_version}] Walkie-Talkie ${version}"
-            } else {
-                displayName = "[FABRIC][${min_minecraft_version}-${minecraft_version}] Walkie-Talkie ${version}"
-            }
-            relations {
-                requiredDependency 'simple-voice-chat'
-                requiredDependency 'architectury-api'
-                requiredDependency 'fabric-api'
-            }
-        }
-    }
-}
-
-tasks.modrinth.configure({
-    group = 'upload'
-})
-
-modrinth {
-    token = file("${rootDir}/modrinth_token.txt").exists() ? file("${rootDir}/modrinth_token.txt").text : ''
-    projectId = "yaRitiLw"
-    versionNumber = "fabric-${version}"
-    if (minecraft_version == min_minecraft_version) {
-        versionName = "[FABRIC][${minecraft_version}] Walkie-Talkie ${version}"
-    } else {
-        versionName = "[FABRIC][${min_minecraft_version}-${minecraft_version}] Walkie-Talkie ${version}"
-    }
-    uploadFile = remapJar
-    versionType = release_type.toUpperCase()
-    changelog = file("${rootDir}/changelog.md").text
-    gameVersions = [minecraft_version]
-    loaders = ['fabric']
-    dependencies {
-        required.project '9eGKb6K1' // simple-voice-chat
-        required.project 'lhGA9TYQ' // architectury-api
-        required.project 'P7dR8mSH' // fabric-api
-    }
-}
-tasks.modrinth.dependsOn(build)
 
 sourcesJar {
     def commonSources = project(":common").sourcesJar
