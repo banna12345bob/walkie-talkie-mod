@@ -30,6 +30,7 @@ subprojects {
                 "fabric_version": fabric_api_version,
                 "fabric_loader_version": fabric_loader_version,
                 "voicechat_api_version": voicechat_api_version,
+                "create_version": create_version,
                 "architectury_version": architectury_version,
                 "mod_name": mod_name,
                 "mod_author": mod_author,

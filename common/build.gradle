@@ -1,3 +1,7 @@
+architectury {
+    common(enabled_platforms.split(","))
+}
+
 repositories {
     maven { url = "https://mvn.devos.one/snapshots/" }  // Create Fabric, Forge Tags, Milk Lib, Registrate Fabric
     maven{ url = "https://raw.githubusercontent.com/Fuzss/modresources/main/maven/" } // forge config api port
@@ -20,8 +24,4 @@ dependencies {
     modCompileOnly("net.fabricmc.fabric-api:fabric-api:${fabric_api_version}")
 
     modApi "dev.architectury:architectury:${architectury_version}"
-}
-
-architectury {
-    common()
 }
