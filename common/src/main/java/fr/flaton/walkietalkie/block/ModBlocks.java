@@ -19,6 +19,9 @@ public class ModBlocks {
     public static final RegistrySupplier<Block> SPEAKER = registerBlock("speaker",
             () -> new SpeakerBlock(AbstractBlock.Settings.create().mapColor(MapColor.OAK_TAN).instrument(Instrument.BASS).sounds(BlockSoundGroup.WOOD).strength(0.8F).burnable()));
 
+    public static final RegistrySupplier<Block> WARKIEBLOCK = registerBlock("warkieblock",
+            () -> new WarkieBlock(AbstractBlock.Settings.create().mapColor(MapColor.OAK_TAN).instrument(Instrument.BASS).sounds(BlockSoundGroup.WOOD).strength(0.8F)));
+
     private static <T extends Block> RegistrySupplier<T> registerBlock(String name, Supplier<T> block) {
         return BLOCKS.register(name, block);
     }

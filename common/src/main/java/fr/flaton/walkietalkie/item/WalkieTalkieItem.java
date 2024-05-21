@@ -1,8 +1,10 @@
 package fr.flaton.walkietalkie.item;
 
 import fr.flaton.walkietalkie.client.gui.screen.WalkieTalkieScreen;
+import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
@@ -10,7 +12,7 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.world.World;
 
-public class WalkieTalkieItem extends Item {
+public class WalkieTalkieItem extends BlockItem {
 
     public int getRange() {
         return RANGE;
@@ -23,8 +25,8 @@ public class WalkieTalkieItem extends Item {
     public static final String NBT_KEY_ACTIVATE = "walkietalkie.activate";
 
 
-    public WalkieTalkieItem(Settings settings, int range) {
-        super(settings);
+    public WalkieTalkieItem(Block block, Settings settings, int range) {
+        super(block, settings);
         RANGE = range;
     }
 
@@ -41,7 +43,10 @@ public class WalkieTalkieItem extends Item {
                 return TypedActionResult.success(stack);
             }
         }
-
+        if (player.isSneaking())
+        {
+            this.place()
+        }
         return super.use(world, player, hand);
     }
 

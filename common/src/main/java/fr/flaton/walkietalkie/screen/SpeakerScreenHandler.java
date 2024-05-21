@@ -46,6 +46,6 @@ public class SpeakerScreenHandler extends ScreenHandler {
 
     @Override
     public boolean canUse(PlayerEntity player) {
-        return canUse(this.context, player, ModBlocks.SPEAKER.get());
+        return canUse(this.context, player, ModBlocks.WARKIEBLOCK.get());
     }
 }

@@ -1,0 +1,12 @@
+{
+  "parent": "block/cube",
+  "textures": {
+    "down": "walkietalkie:block",
+    "east": "walkietalkie:block",
+    "north": "walkietalkie:block",
+    "particle": "walkietalkie:block",
+    "south": "walkietalkie:block",
+    "up": "walkietalkie:block",
+    "west": "walkietalkie:block"
+  }
+}

@@ -38,7 +38,7 @@ ordering = "AFTER"
 side = "BOTH"
 [[dependencies.walkietalkie]]
 modId="create"
-mandatory=true
+mandatory=false
 versionRange="${create_version}"
 ordering="NONE"
 side="BOTH"

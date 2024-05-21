@@ -14,6 +14,9 @@ public class ModBlockEntities {
     public static final RegistrySupplier<BlockEntityType<SpeakerBlockEntity>> SPEAKER = BLOCK_ENTITIES.register("speaker", () ->
             BlockEntityType.Builder.create(SpeakerBlockEntity::new, ModBlocks.SPEAKER.get()).build(null));
 
+    public static final RegistrySupplier<BlockEntityType<WarkieBlockEntity>> WARKIEBLOCK = BLOCK_ENTITIES.register("warkieblock", () ->
+            BlockEntityType.Builder.create(WarkieBlockEntity::new, ModBlocks.WARKIEBLOCK.get()).build(null));
+
     public static void register() {
         BLOCK_ENTITIES.register();
     }

@@ -38,7 +38,7 @@ dependencies {
     modRuntimeOnly "maven.modrinth:simple-voice-chat:forge-${voicechat_version}"
 
     // Create and its dependencies
-    modImplementation("com.simibubi.create:create-${create_minecraft_version}:${create_version}:slim") { transitive = false } // Crashes the game and IDK why
+    //modImplementation("com.simibubi.create:create-${create_minecraft_version}:${create_version}:slim") { transitive = false } // Crashes the game and IDK why
     modImplementation("com.jozufozu.flywheel:flywheel-forge-${flywheel_minecraft_version}:${flywheel_version}")
     modImplementation("com.tterrag.registrate:Registrate:${registrate_version}")
 }

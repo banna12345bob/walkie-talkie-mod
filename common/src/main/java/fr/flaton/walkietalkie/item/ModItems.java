@@ -12,17 +12,17 @@ import net.minecraft.registry.RegistryKeys;
 public class ModItems {
     public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(Constants.MOD_ID, RegistryKeys.ITEM);
 
-    public static final RegistrySupplier<Item> WOODEN_WALKIETALKIE = ITEMS.register("wooden_walkietalkie", () -> new WalkieTalkieItem(
+    public static final RegistrySupplier<Item> WOODEN_WALKIETALKIE = ITEMS.register("wooden_walkietalkie", () -> new WalkieTalkieItem(ModBlocks.WARKIEBLOCK.get(),
             new Item.Settings().maxCount(1).arch$tab(ModItemGroup.WALKIETALKIE), ModConfig.woodenWalkieTalkieRange));
-    public static final RegistrySupplier<Item> STONE_WALKIETALKIE = ITEMS.register("stone_walkietalkie", () -> new WalkieTalkieItem(
+    public static final RegistrySupplier<Item> STONE_WALKIETALKIE = ITEMS.register("stone_walkietalkie", () -> new WalkieTalkieItem(ModBlocks.WARKIEBLOCK.get(),
             new Item.Settings().maxCount(1).arch$tab(ModItemGroup.WALKIETALKIE), ModConfig.stoneWalkieTalkieRange));
-    public static final RegistrySupplier<Item> IRON_WALKIETALKIE = ITEMS.register("iron_walkietalkie", () -> new WalkieTalkieItem(
+    public static final RegistrySupplier<Item> IRON_WALKIETALKIE = ITEMS.register("iron_walkietalkie", () -> new WalkieTalkieItem(ModBlocks.WARKIEBLOCK.get(),
             new Item.Settings().maxCount(1).arch$tab(ModItemGroup.WALKIETALKIE), ModConfig.ironWalkieTalkieRange));
-    public static final RegistrySupplier<Item> GOLDEN_WALKIETALKIE = ITEMS.register("golden_walkietalkie", () -> new WalkieTalkieItem(
+    public static final RegistrySupplier<Item> GOLDEN_WALKIETALKIE = ITEMS.register("golden_walkietalkie", () -> new WalkieTalkieItem(ModBlocks.WARKIEBLOCK.get(),
             new Item.Settings().maxCount(1).arch$tab(ModItemGroup.WALKIETALKIE), ModConfig.goldenWalkieTalkieRange));
-    public static final RegistrySupplier<Item> DIAMOND_WALKIETALKIE = ITEMS.register("diamond_walkietalkie", () -> new WalkieTalkieItem(
+    public static final RegistrySupplier<Item> DIAMOND_WALKIETALKIE = ITEMS.register("diamond_walkietalkie", () -> new WalkieTalkieItem(ModBlocks.WARKIEBLOCK.get(),
             new Item.Settings().maxCount(1).arch$tab(ModItemGroup.WALKIETALKIE), ModConfig.diamondWalkieTalkieRange));
-    public static final RegistrySupplier<Item> NETHERITE_WALKIETALKIE = ITEMS.register("netherite_walkietalkie", () -> new WalkieTalkieItem(
+    public static final RegistrySupplier<Item> NETHERITE_WALKIETALKIE = ITEMS.register("netherite_walkietalkie", () -> new WalkieTalkieItem(ModBlocks.WARKIEBLOCK.get(),
             new Item.Settings().maxCount(1).fireproof().arch$tab(ModItemGroup.WALKIETALKIE), ModConfig.netheriteWalkieTalkieRange));
 
     public static final RegistrySupplier<Item> SPEAKER = ITEMS.register("speaker", () -> new BlockItem(ModBlocks.SPEAKER.get(),
