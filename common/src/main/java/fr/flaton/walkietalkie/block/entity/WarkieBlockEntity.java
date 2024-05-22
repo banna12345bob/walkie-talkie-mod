@@ -1,23 +1,25 @@
 package fr.flaton.walkietalkie.block.entity;
 
+import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
+import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
+import com.simibubi.create.foundation.blockEntity.behaviour.ValueBoxTransform;
+import com.simibubi.create.foundation.utility.Lang;
+import com.simibubi.create.foundation.utility.VecHelper;
 import de.maxhenkel.voicechat.api.Position;
+import de.maxhenkel.voicechat.api.ServerLevel;
 import de.maxhenkel.voicechat.api.VoicechatServerApi;
 import de.maxhenkel.voicechat.api.audiochannel.LocationalAudioChannel;
 import de.maxhenkel.voicechat.api.events.MicrophonePacketEvent;
 import fr.flaton.walkietalkie.Util;
 import fr.flaton.walkietalkie.WalkieTalkieVoiceChatPlugin;
 import fr.flaton.walkietalkie.config.ModConfig;
-import fr.flaton.walkietalkie.screen.SpeakerScreenHandler;
+import fr.flaton.walkietalkie.screen.ChannelValueBehaviour;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.screen.NamedScreenHandlerFactory;
 import net.minecraft.screen.PropertyDelegate;
-import net.minecraft.screen.ScreenHandler;
-import net.minecraft.screen.ScreenHandlerContext;
-import net.minecraft.text.Text;
+import net.minecraft.state.property.DirectionProperty;
+import net.minecraft.state.property.Properties;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
@@ -27,18 +29,20 @@ import java.util.List;
 import java.util.UUID;
 
 
-public class WarkieBlockEntity extends BlockEntity implements NamedScreenHandlerFactory {
+public class WarkieBlockEntity extends SmartBlockEntity {
 
     private static final List<WarkieBlockEntity> warkieBlockEntities = new ArrayList<>();
 
-    public static final String NBT_KEY_CANAL = "walkietalkie.canal";
+    public static final DirectionProperty FACING = Properties.FACING;
+
+    public static String NBT_KEY_CHANNEL = "walkietalkie.channel";
     public static final String NBT_KEY_MUTE = "walkietalkie.mute";
     public static final String NBT_KEY_ACTIVATE = "walkietalkie.activate";
 
     protected final PropertyDelegate propertyDelegate;
 
-    boolean activated;
-    int canal = 1;
+    boolean activated = true;
+    protected ChannelValueBehaviour channelBehaviour;
 
     private final UUID channelId;
     private LocationalAudioChannel channel = null;
@@ -54,7 +58,7 @@ public class WarkieBlockEntity extends BlockEntity implements NamedScreenHandler
             public int get(int index) {
                 return switch (index) {
                     case 0 -> WarkieBlockEntity.this.activated ? 1 : 0;
-                    case 1 -> WarkieBlockEntity.this.canal;
+                    case 1 -> WarkieBlockEntity.this.channelBehaviour.getValue();
                     default -> 0;
                 };
             }
@@ -63,7 +67,7 @@ public class WarkieBlockEntity extends BlockEntity implements NamedScreenHandler
             public void set(int index, int value) {
                 switch (index) {
                     case 0 -> WarkieBlockEntity.this.activated = value == 1;
-                    case 1 -> WarkieBlockEntity.this.canal = value;
+                    case 1 -> WarkieBlockEntity.this.channelBehaviour.setValue(value);
                     default -> {
                     }
                 }
@@ -77,27 +81,20 @@ public class WarkieBlockEntity extends BlockEntity implements NamedScreenHandler
     }
 
     @Override
-    public ScreenHandler createMenu(int syncId, PlayerInventory playerInventory, PlayerEntity player) {
-        return new SpeakerScreenHandler(syncId, this.propertyDelegate, ScreenHandlerContext.create(this.world, this.getPos()));
+    public void addBehaviours(List<BlockEntityBehaviour> behaviours) {
+        channelBehaviour = new ChannelValueBehaviour(Lang.translateDirect("kinetics.creative_motor.rotation_speed"),
+                this, new ChannelValueBox());
+        channelBehaviour.setValue(1);
+        behaviours.add(channelBehaviour);
     }
 
-    @Override
-    public Text getDisplayName() {
-        return Text.translatable("gui.walkietalkie.speaker.title");
-    }
+    class ChannelValueBox extends ValueBoxTransform.Sided {
 
-    @Override
-    public void readNbt(NbtCompound nbt) {
-        super.readNbt(nbt);
-        this.activated = nbt.getBoolean(NBT_KEY_ACTIVATE);
-        this.canal = nbt.getInt(NBT_KEY_CANAL);
-    }
+        @Override
+        protected Vec3d getSouthLocation() {
+            return VecHelper.voxelSpace(8, 8, 12.5);
+        }
 
-    @Override
-    public void writeNbt(NbtCompound nbt) {
-        super.writeNbt(nbt);
-        nbt.putBoolean(NBT_KEY_ACTIVATE, this.activated);
-        nbt.putInt(NBT_KEY_CANAL, this.canal);
     }
 
     @Override
@@ -105,29 +102,43 @@ public class WarkieBlockEntity extends BlockEntity implements NamedScreenHandler
         return super.onSyncedBlockEvent(type, data);
     }
 
+    @Override
+    protected void read(NbtCompound compound, boolean clientPacket) {
+        this.activated = compound.getBoolean(NBT_KEY_ACTIVATE);
+        this.channelBehaviour.setValue(compound.getInt(NBT_KEY_CHANNEL));
+        super.read(compound, clientPacket);
+    }
+
+    @Override
+    protected void write(NbtCompound compound, boolean clientPacket) {
+        compound.putBoolean(NBT_KEY_ACTIVATE, this.activated);
+        compound.putInt(NBT_KEY_CHANNEL, this.channelBehaviour.getValue()*-1); // IDK why it's negative but it is
+        super.write(compound, clientPacket);
+    }
+
     public static List<WarkieBlockEntity> getSpeakersActivatedInRange(int canal, World world, Vec3d pos, int range) {
         warkieBlockEntities.removeIf(BlockEntity::isRemoved);
 
         List<WarkieBlockEntity> list = new ArrayList<>();
 
-        for (WarkieBlockEntity speaker : warkieBlockEntities) {
+        for (WarkieBlockEntity warkieBlock : warkieBlockEntities) {
 
-            if (!speaker.hasWorld()) {
+            if (!warkieBlock.hasWorld()) {
                 continue;
             }
 
             if (!ModConfig.crossDimensionsEnabled
-                    && !world.getRegistryKey().getRegistry().equals(speaker.getWorld().getRegistryKey().getRegistry())) {
+                    && !world.getRegistryKey().getRegistry().equals(warkieBlock.getWorld().getRegistryKey().getRegistry())) {
                 continue;
             }
 
-            if (!speaker.canBroadcastToSpeaker(world, pos, speaker, range)) {
+            if (!warkieBlock.canBroadcastToSpeaker(world, pos, warkieBlock, range)) {
                 continue;
             }
 
-            if (speaker.activated) {
-                if (speaker.canal == canal) {
-                    list.add(speaker);
+            if (warkieBlock.activated) {
+                if (warkieBlock.channelBehaviour.getValue() == canal) {
+                    list.add(warkieBlock);
                 }
             }
         }
@@ -139,7 +150,7 @@ public class WarkieBlockEntity extends BlockEntity implements NamedScreenHandler
         Position pos = api.createPosition(this.getPos().getX(), this.getPos().getY(), this.getPos().getZ());
 
         if (this.channel == null) {
-            this.channel = api.createLocationalAudioChannel(this.channelId, api.fromServerLevel(this.world), pos);
+            this.channel = api.createLocationalAudioChannel(this.channelId, api.fromServerLevel(this.getWorld()), pos);
             if (this.channel == null) {
                 return;
             }

@@ -61,7 +61,7 @@ public class WalkieTalkieScreen extends Screen {
 
         this.addDrawableChild(ButtonWidget.builder(Text.literal("<"), button -> sendUpdateWalkieTalkie(1, false)).dimensions(this.width / 2 - 10 - 40, guiTop + 20, 20, 20).build());
 
-        canal = Text.literal(String.valueOf(stack.getNbt().getInt(WalkieTalkieItem.NBT_KEY_CANAL)));
+        canal = Text.literal(String.valueOf(stack.getNbt().getInt(WalkieTalkieItem.NBT_KEY_CHANNEL)));
 
     }
 
@@ -93,7 +93,7 @@ public class WalkieTalkieScreen extends Screen {
     public void updateButtons(ItemStack stack) {
         mute.setState(stack.getNbt().getBoolean(WalkieTalkieItem.NBT_KEY_MUTE));
         activate.setState(stack.getNbt().getBoolean(WalkieTalkieItem.NBT_KEY_ACTIVATE));
-        canal = Text.literal(String.valueOf(stack.getNbt().getInt(WalkieTalkieItem.NBT_KEY_CANAL)));
+        canal = Text.literal(String.valueOf(stack.getNbt().getInt(WalkieTalkieItem.NBT_KEY_CHANNEL)));
     }
 
     public static WalkieTalkieScreen getInstance() {

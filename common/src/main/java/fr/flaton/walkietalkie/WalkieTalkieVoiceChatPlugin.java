@@ -5,6 +5,7 @@ import de.maxhenkel.voicechat.api.events.EventRegistration;
 import de.maxhenkel.voicechat.api.events.MicrophonePacketEvent;
 import de.maxhenkel.voicechat.api.events.VoicechatServerStartedEvent;
 import fr.flaton.walkietalkie.block.entity.SpeakerBlockEntity;
+import fr.flaton.walkietalkie.block.entity.WarkieBlockEntity;
 import fr.flaton.walkietalkie.config.ModConfig;
 import fr.flaton.walkietalkie.item.WalkieTalkieItem;
 import net.minecraft.entity.player.PlayerEntity;
@@ -105,7 +106,7 @@ public class WalkieTalkieVoiceChatPlugin implements VoicechatPlugin {
 
         int senderCanal = getCanal(senderItemStack);
 
-        SpeakerBlockEntity.getSpeakersActivatedInRange(senderCanal, senderPlayer.getWorld(), senderPlayer.getPos(), getRange(senderItemStack))
+        WarkieBlockEntity.getSpeakersActivatedInRange(senderCanal, senderPlayer.getWorld(), senderPlayer.getPos(), getRange(senderItemStack))
                 .forEach(speakerBlockEntity -> speakerBlockEntity.playSound(api, event));
 
         for (PlayerEntity receiverPlayer : Objects.requireNonNull(senderPlayer.getServer()).getPlayerManager().getPlayerList()) {
@@ -148,7 +149,7 @@ public class WalkieTalkieVoiceChatPlugin implements VoicechatPlugin {
 
 
     private int getCanal(ItemStack stack) {
-        return Objects.requireNonNull(stack.getNbt()).getInt(WalkieTalkieItem.NBT_KEY_CANAL);
+        return Objects.requireNonNull(stack.getNbt()).getInt(WalkieTalkieItem.NBT_KEY_CHANNEL);
     }
 
     private int getRange(ItemStack stack) {

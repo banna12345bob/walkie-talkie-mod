@@ -20,7 +20,7 @@ public class WalkieTalkieItem extends BlockItem {
 
     private final int RANGE;
 
-    public static final String NBT_KEY_CANAL = "walkietalkie.canal";
+    public static final String NBT_KEY_CHANNEL = "walkietalkie.channel";
     public static final String NBT_KEY_MUTE = "walkietalkie.mute";
     public static final String NBT_KEY_ACTIVATE = "walkietalkie.activate";
 
@@ -43,10 +43,6 @@ public class WalkieTalkieItem extends BlockItem {
                 return TypedActionResult.success(stack);
             }
         }
-        if (player.isSneaking())
-        {
-            this.place()
-        }
         return super.use(world, player, hand);
     }
 
@@ -61,7 +57,7 @@ public class WalkieTalkieItem extends BlockItem {
             NbtCompound nbtCompound = new NbtCompound();
             nbtCompound.putBoolean(WalkieTalkieItem.NBT_KEY_ACTIVATE, false);
             nbtCompound.putBoolean(WalkieTalkieItem.NBT_KEY_MUTE, false);
-            nbtCompound.putInt(WalkieTalkieItem.NBT_KEY_CANAL, 1);
+            nbtCompound.putInt(WalkieTalkieItem.NBT_KEY_CHANNEL, 1);
             stack.setNbt(nbtCompound);
         }
 
