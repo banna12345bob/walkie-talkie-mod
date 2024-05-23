@@ -1,5 +1,6 @@
 {
   "block.walkietalkie.warkieblock": "Walkie-Talkie",
+  "create.block.walkietalkie.warkieblock.channel": "Select channel",
 
   "block.walkietalkie.speaker": "Speaker",
 
@@ -11,8 +12,8 @@
   "advancement.walkietalkie.root.title": "Walkie Talkie",
   "advancement.walkietalkie.root.description": "Discover the power of communication with the walkie-talkie.",
 
-  "advancement.walkietalkie.wooden_walkietalkie.title": "Basic Communication",
-  "advancement.walkietalkie.wooden_walkietalkie.description": "Obtained a wooden walkie-talkie, allowing you to communicate over short distances.",
+  "advancement.walkietalkie.wooden_walkietalkie.title": "Communication",
+  "advancement.walkietalkie.wooden_walkietalkie.description": "Obtained a walkie-talkie.",
 
   "advancement.walkietalkie.stone_walkietalkie.title": "Improved Communication",
   "advancement.walkietalkie.stone_walkietalkie.description": "Obtained a stone walkie-talkie, allowing for greater communication range.",

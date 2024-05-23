@@ -18,8 +18,6 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.screen.PropertyDelegate;
-import net.minecraft.state.property.DirectionProperty;
-import net.minecraft.state.property.Properties;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
@@ -32,8 +30,6 @@ import java.util.UUID;
 public class WarkieBlockEntity extends SmartBlockEntity {
 
     private static final List<WarkieBlockEntity> warkieBlockEntities = new ArrayList<>();
-
-    public static final DirectionProperty FACING = Properties.FACING;
 
     public static String NBT_KEY_CHANNEL = "walkietalkie.channel";
     public static final String NBT_KEY_MUTE = "walkietalkie.mute";
@@ -82,9 +78,9 @@ public class WarkieBlockEntity extends SmartBlockEntity {
 
     @Override
     public void addBehaviours(List<BlockEntityBehaviour> behaviours) {
-        channelBehaviour = new ChannelValueBehaviour(Lang.translateDirect("kinetics.creative_motor.rotation_speed"),
+        channelBehaviour = new ChannelValueBehaviour(Lang.translateDirect("block.walkietalkie.warkieblock.channel"),
                 this, new ChannelValueBox());
-        channelBehaviour.setValue(1);
+        channelBehaviour.setValue(-1); // IDK why it needs to be negative
         behaviours.add(channelBehaviour);
     }
 
@@ -137,7 +133,7 @@ public class WarkieBlockEntity extends SmartBlockEntity {
             }
 
             if (warkieBlock.activated) {
-                if (warkieBlock.channelBehaviour.getValue() == canal) {
+                if (warkieBlock.channelBehaviour.getValue()*-1 == canal) {
                     list.add(warkieBlock);
                 }
             }
@@ -150,7 +146,8 @@ public class WarkieBlockEntity extends SmartBlockEntity {
         Position pos = api.createPosition(this.getPos().getX(), this.getPos().getY(), this.getPos().getZ());
 
         if (this.channel == null) {
-            this.channel = api.createLocationalAudioChannel(this.channelId, api.fromServerLevel(this.getWorld()), pos);
+            ServerLevel serverLevel = api.fromServerLevel(this.getWorld()); // This gives a "serverLevel is not an instance of ServerLevel" error
+            this.channel = api.createLocationalAudioChannel(this.channelId, serverLevel, pos);
             if (this.channel == null) {
                 return;
             }
